@@ -24,6 +24,7 @@ export class UserController {
 
     async register(req: Request, resp: Response, next: NextFunction) {
         try {
+            debug('register');
             const user = await this.userRepo.postNewUser(req.body);
             resp.status(201).json({ user });
         } catch (error) {
@@ -38,6 +39,7 @@ export class UserController {
 
     async login(req: Request, resp: Response, next: NextFunction) {
         try {
+            debug('login');
             const user = await this.userRepo.findUser({
                 email: req.body.email,
             });
