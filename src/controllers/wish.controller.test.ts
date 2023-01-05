@@ -20,9 +20,10 @@ describe('Given wish controller', () => {
         userRepository = UserRepository.getInstance();
 
         wishRepository.getAll = jest.fn().mockResolvedValue(['wish']);
-        wishRepository.getWish = jest
-            .fn()
-            .mockResolvedValue({ id: 1, owner: { id: 1 } });
+        wishRepository.getWish = jest.fn().mockResolvedValue({
+            id: 1,
+            owner: { id: '123456789012345678901234' },
+        });
         wishRepository.findInspo = jest.fn().mockResolvedValue(['wish']);
         wishRepository.postNew = jest.fn().mockResolvedValue(['wish']);
         wishRepository.patch = jest.fn().mockResolvedValue('wish');
@@ -163,6 +164,14 @@ describe('Given wish controller', () => {
         test('Then it should return the wish with the updated value', async () => {
             await wishController.delete(req as Request, resp as Response, next);
             expect(resp.status).toHaveBeenCalledWith(201);
+        });
+        test('Then it should return the wish with the updated values', async () => {
+            userRepository.getUser = jest.fn().mockResolvedValue({
+                id: '123456789012345678901234',
+                myWishes: [1],
+            });
+            await wishController.delete(req as Request, resp as Response, next);
+            expect(next).toHaveBeenCalled();
         });
 
         test('Then when delete is called with incorrect information, it should return an error', async () => {
