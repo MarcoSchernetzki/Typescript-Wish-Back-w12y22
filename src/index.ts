@@ -3,7 +3,9 @@ import { app } from './app.js';
 import * as dotenv from 'dotenv';
 import { dbConnect } from './db/db.connect.js';
 import { CustomError } from './interfaces/error.js';
+import createDebug from 'debug';
 dotenv.config();
+const debug = createDebug('Wish:src:index');
 
 const port = process.env.PORT || 3300;
 const server = http.createServer(app);
@@ -20,7 +22,7 @@ server.on('listening', () => {
                 ? `http://localhost:${addr?.port}`
                 : `port ${addr?.port}`;
     }
-    console.log(`Listening on ${bind}`);
+    debug(`Listening on ${bind}`);
 });
 
 server.on('error', (error: CustomError, response: http.ServerResponse) => {

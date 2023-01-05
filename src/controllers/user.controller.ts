@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { WishRepo, UserRepo } from '../repositories/repo.js';
 import { HTTPError } from '../interfaces/error.js';
 import { createToken, passwdValidate } from '../services/auth.js';
+import createDebug from 'debug';
+const debug = createDebug('Wish:controller');
 
 export class UserController {
     constructor(
@@ -11,6 +13,7 @@ export class UserController {
 
     async getUser(req: Request, resp: Response, next: NextFunction) {
         try {
+            debug('getUser');
             const user = await this.userRepo.getUser(req.params.id);
             resp.status(201);
             resp.json({ user });

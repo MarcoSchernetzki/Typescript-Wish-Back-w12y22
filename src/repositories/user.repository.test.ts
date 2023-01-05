@@ -1,4 +1,3 @@
-import { UserI } from './../entities/user';
 import mongoose from 'mongoose';
 import { dbConnect } from '../db/db.connect.js';
 import { User } from '../entities/user.js';
@@ -7,16 +6,16 @@ import { WishRepository } from './wish.repository.js';
 
 const mock = [
     {
-        name: 'Pepe',
-        email: 'pepe@gmail.com',
-        passwd: 'Pepe123',
-        role: 'user',
+        name: 'raul',
+        email: 'raul@gmail.com',
+        passwd: '123',
+        myWishes: [],
     },
     {
         name: 'Pepa',
         email: 'pepa@email.com',
-        passwd: 'Pepa321',
-        role: 'user',
+        passwd: '123',
+        myWishes: [],
     },
 ];
 
@@ -25,47 +24,59 @@ describe('Given UserRespository', () => {
         const repository = UserRepository.getInstance();
         WishRepository.getInstance();
         let testIds: Array<string>;
-
-        beforeEach(async () => {
+        const setUpCollection = async () => {
             await dbConnect();
             await User.deleteMany();
             await User.insertMany(mock);
             const data = await User.find();
-            testIds = [data[0].id, data[1].id];
+            return [data[0].id, data[1].id];
+        };
+        beforeAll(async () => {
+            testIds = await setUpCollection();
         });
 
-        afterEach(() => {
-            mongoose.disconnect();
-        });
+        const invalidId = '63b6f4246e1aeb4a2a1795f1';
+        const badFormattedId = '4';
 
-        test('Then getUser should have been called', async () => {
-            const result = await repository.getUser(testIds[0]);
-            expect(result.email).toBe('pepe@gmail.com');
-        });
+        describe('When we instantiate getUser()', () => {
+            test('Then getUser should have been called', async () => {
+                const result = await repository.getUser(testIds[0]);
+                expect(result.email).toBe(mock[0].email);
+            });
 
-        test('Then getUser should throw an error', async () => {
-            expect(async () => {
-                await repository.getUser('638bd837cb2b7d4a02e79359');
-            }).rejects.toThrowError();
+            test('Then getUser should throw an error', async () => {
+                expect(async () => {
+                    await repository.getUser(invalidId);
+                }).rejects.toThrowError('Not found id');
+            });
+            test('Then getUser should throw an error', async () => {
+                expect(async () => {
+                    await repository.getUser(badFormattedId);
+                }).rejects.toThrowError();
+            });
         });
 
         describe('When we instantiate update()', () => {
             test('Then it should return one user', async () => {
-                await repository.update(testIds[0], mock[0] as UserI);
-                expect(mock[0].name).toEqual('Pepe');
+                console.log(testIds[0]);
+
+                await repository.update(testIds[0], mock[0]);
+                expect(mock[0].name).toEqual(mock[0].name);
             });
 
             test('and receives an invalid id it should return an error', async () => {
                 expect(async () => {
-                    await repository.update(testIds[4], mock[1] as UserI);
+                    await repository.update(invalidId, mock[0]);
                 }).rejects.toThrowError();
             });
         });
 
         describe('When we instantiate findUser()', () => {
             test('Then find should have been called', async () => {
-                const result = await repository.findUser({ name: 'Pepe' });
-                expect(result.email).toBe('pepe@gmail.com');
+                const result = await repository.findUser({
+                    name: mock[0].name,
+                });
+                expect(result.email).toBe(mock[0].email);
             });
 
             test('Then find should throw an error', async () => {
@@ -90,12 +101,15 @@ describe('Given UserRespository', () => {
                 const newUser = {
                     name: 'Chema',
                     email: 'chema@email.com',
-                    passwd: '',
+                    passwd: 2 as unknown as string,
                 };
                 expect(async () => {
                     await repository.postNewUser(newUser);
                 }).rejects.toThrowError();
             });
+        });
+        afterAll(() => {
+            mongoose.disconnect();
         });
     });
 });

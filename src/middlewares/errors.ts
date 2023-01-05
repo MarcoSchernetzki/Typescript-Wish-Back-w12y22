@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { CustomError } from '../interfaces/error.js';
+import createDebug from 'debug';
+const debug = createDebug('Wish:SERVER');
 
 export const errorManager = (
     error: CustomError,
@@ -7,6 +9,7 @@ export const errorManager = (
     resp: Response,
     _next: NextFunction
 ) => {
+    debug(error.name, error.statusCode, error.statusMessage, error.message);
     let status = error.statusCode || 500;
     if (error.name === 'ValidationError') {
         status = 406;
@@ -16,7 +19,7 @@ export const errorManager = (
         type: error.name,
         error: error.message,
     };
-    _next();
+
     resp.status(status);
     resp.json(result);
     resp.end();
