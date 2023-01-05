@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { Types } from 'mongoose';
-import { UserI } from '../entities/user';
 import { HTTPError } from '../interfaces/error';
 import { UserRepository } from '../repositories/user.repository';
 import { ExtraRequest, logged, who } from './interceptors';
