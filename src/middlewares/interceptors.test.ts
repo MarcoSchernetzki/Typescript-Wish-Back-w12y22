@@ -1,6 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
+import { Types } from 'mongoose';
+import { HTTPError } from '../interfaces/error';
+import { UserRepository } from '../repositories/user.repository';
 import { ExtraRequest, logged, who } from './interceptors';
-
+const mock = {
+    id: new Types.ObjectId(),
+    name: 'Lola',
+    passwd: 'LolaLola',
+    email: 'lola@gmail.com',
+    role: 'user',
+};
 describe('Given the logged interceptor', () => {
     describe('When its invoked', () => {
         test('When the authString is empty, it should return an error', () => {
@@ -51,10 +60,33 @@ describe('Given the logged interceptor', () => {
 
 describe('Given the who interceptor', () => {
     describe('When its invoked', () => {
-        test('When the authString is empty in who, it should return an error', () => {
-            const req: Partial<Request> = {
-                get: jest.fn().mockReturnValueOnce(false),
+        test('Then it should return an error', () => {
+            const userRepo = UserRepository.getInstance();
+            userRepo.getUser = jest.fn().mockResolvedValue(mock);
+            const req: Partial<ExtraRequest> = {
+                payload: { id: mock.id.toString() },
             };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            who(req as ExtraRequest, res as Response, next);
+            expect(next).not.toHaveBeenCalled();
+        });
+        test('Then it should return an error of type HTTPError', () => {
+            const userRepo = UserRepository.getInstance();
+            userRepo.getUser = jest.fn().mockResolvedValue(mock);
+            const req: Partial<ExtraRequest> = {
+                payload: { id: mock.id },
+            };
+            const res: Partial<Response> = {};
+            const next: NextFunction = jest.fn();
+
+            who(req as ExtraRequest, res as Response, next);
+            expect(HTTPError).toThrowError();
+        });
+
+        test('Then next should be called', () => {
+            const req: Partial<Request> = {};
             const res: Partial<Response> = {};
             const next: NextFunction = jest.fn();
 
