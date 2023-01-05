@@ -3,6 +3,8 @@ import { JwtPayload } from 'jsonwebtoken';
 import { HTTPError } from '../interfaces/error.js';
 import { UserRepository } from '../repositories/user.repository.js';
 import { readToken } from '../services/auth.js';
+import createDebug from 'debug';
+const debug = createDebug('Wish:interceptor');
 
 export interface ExtraRequest extends Request {
     payload?: JwtPayload;
@@ -13,6 +15,7 @@ export const logged = (
     res: Response,
     next: NextFunction
 ) => {
+    debug('logged');
     const authString = req.get('Authorization');
     if (!authString || !authString?.startsWith('Bearer')) {
         next(
@@ -37,6 +40,7 @@ export const who = async (
     res: Response,
     next: NextFunction
 ) => {
+    debug('who');
     const userRepository = UserRepository.getInstance();
     try {
         const user = await userRepository.getUser(
