@@ -52,7 +52,7 @@ jobs:
       - name: Testing coverage
         run: npm run test:prod #Change for a valid npm script
         env:
-          USER1: ${{ secrets.USER1 }}
+          USER1: ${{ secrets.USER }}
           PASSW: ${{ secrets.PASSW }}
           CLUSTER: ${{ secrets.CLUSTER }}
           SECRET: ${{ secrets.SECRET }}
