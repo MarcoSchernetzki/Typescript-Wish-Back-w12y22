@@ -18,7 +18,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use(setCors);
-app.use(errorManager);
 
 app.get('/', (_req, res) => {
     res.send('iWish App').end();
@@ -26,3 +25,5 @@ app.get('/', (_req, res) => {
 
 app.use('/wishes', wishesRouter);
 app.use('/users', usersRouter);
+
+app.use(errorManager);
