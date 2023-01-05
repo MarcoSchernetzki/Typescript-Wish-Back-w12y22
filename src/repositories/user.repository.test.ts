@@ -58,12 +58,9 @@ describe('Given UserRespository', () => {
 
         describe('When we instantiate update()', () => {
             test('Then it should return one user', async () => {
-                console.log(testIds[0]);
-
                 await repository.update(testIds[0], mock[0]);
                 expect(mock[0].name).toEqual(mock[0].name);
             });
-
             test('and receives an invalid id it should return an error', async () => {
                 expect(async () => {
                     await repository.update(invalidId, mock[0]);

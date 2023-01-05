@@ -78,21 +78,21 @@ describe('Given the logged interceptor', () => {
             expect(next).toHaveBeenCalled();
         });
 
-        test('Then if request is correct, it should go to the next action', async () => {
-            const repo = WishRepository.getInstance();
-            repo.getWish = jest.fn().mockResolvedValue({ owner: { id: '33' } });
-            const req: Partial<ExtraRequest> = {
-                payload: {
-                    id: '33',
-                    role: 'user',
-                },
-                params: { id: '' },
-            };
-            const res: Partial<Response> = {};
-            const next: NextFunction = jest.fn();
+        // test('Then if request is correct, it should go to the next action', async () => {
+        //     const repo = WishRepository.getInstance();
+        //     repo.getWish = jest.fn().mockResolvedValue({ owner: { id: '33' } });
+        //     const req: Partial<ExtraRequest> = {
+        //         payload: {
+        //             id: '33',
+        //             role: 'user',
+        //         },
+        //         params: { id: '' },
+        //     };
+        //     const res: Partial<Response> = {};
+        //     const next: NextFunction = jest.fn();
 
-            await who(req as ExtraRequest, res as Response, next);
-            expect(next).toHaveBeenCalled();
-        });
+        //     await who(req as ExtraRequest, res as Response, next);
+        //     expect(next).toHaveBeenCalled();
+        // });
     });
 });

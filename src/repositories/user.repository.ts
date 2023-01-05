@@ -22,11 +22,7 @@ export class UserRepository implements UserRepo {
 
     async getUser(id: string | number): Promise<UserI> {
         debug('getUser', id);
-        console.log(id);
-
         const result = await this.#Model.findById(id).populate('myWishes');
-        console.log(result);
-
         if (!result) throw new Error('Not found id');
         return result;
     }
